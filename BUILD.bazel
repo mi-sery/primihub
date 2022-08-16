@@ -454,24 +454,24 @@ cc_library(
 cc_library(
     name = "algorithm_lib",
     srcs = glob([
-            "src/primihub/algorithm/aby3ML.cc",
-            "src/primihub/algorithm/linear_model_gen.cc",
-            "src/primihub/algorithm/logistic.cc",
-            "src/primihub/algorithm/logistic_plain.cc",
-            "src/primihub/algorithm/plainML.cc",
+      "src/primihub/algorithm/aby3ML.cc",
+      "src/primihub/algorithm/linear_model_gen.cc",
+      "src/primihub/algorithm/logistic.cc",
+      "src/primihub/algorithm/logistic_plain.cc",
+      "src/primihub/algorithm/plainML.cc",
 	    "src/primihub/algorithm/falcon_lenet.cc",
     ]),
     hdrs = glob([
-            "src/primihub/algorithm/base.h",
-            "src/primihub/algorithm/aby3ML.h",
-            "src/primihub/algorithm/linear_model_gen.h",
-            "src/primihub/algorithm/logistic.h",
-            "src/primihub/algorithm/logistic_plain.h",
-            "src/primihub/algorithm/plainML.h",
-            "src/primihub/algorithm/regression.h",
+      "src/primihub/algorithm/base.h",
+      "src/primihub/algorithm/aby3ML.h",
+      "src/primihub/algorithm/linear_model_gen.h",
+      "src/primihub/algorithm/logistic.h",
+      "src/primihub/algorithm/logistic_plain.h",
+      "src/primihub/algorithm/plainML.h",
+      "src/primihub/algorithm/regression.h",
 	    "src/primihub/algorithm/falcon_lenet.h",
-            "src/primihub/service/dataset/localkv/storage_default.h",
-            "src/primihub/service/dataset/storage_backend.h",
+      "src/primihub/service/dataset/localkv/storage_default.h",
+      "src/primihub/service/dataset/storage_backend.h",
     ]),
     copts = C_OPT + [
       "-maes",
@@ -481,14 +481,14 @@ cc_library(
     linkopts = LINK_OPTS,
     linkstatic = False,
     deps = [
-          ":eigen",
-          ":common_lib",
-          ":protocol_aby3_lib",
-          ":data_store_lib",
-          ":model_util_lib",
-          ":util_lib",
-          ":dataset_service",
-          ":protocol_falcon_lib"
+      ":eigen",
+      ":common_lib",
+      ":protocol_aby3_lib",
+      ":data_store_lib",
+      ":model_util_lib",
+      ":util_lib",
+      ":dataset_service",
+      ":protocol_falcon_lib"
     ],
 )
 
@@ -1165,13 +1165,13 @@ cc_test(
     linkopts = LINK_OPTS,
     linkstatic = False,
     deps = [
-	"@com_google_googletest//:gtest_main",
-	"@com_google_absl//absl/base",
-        "@com_google_absl//absl/flags:flag",
-        "@com_google_absl//absl/flags:parse",
-	":crypto_lib",
-        ":algorithm_lib",
-     ],
+	    "@com_google_googletest//:gtest_main",
+	    "@com_google_absl//absl/base",
+      "@com_google_absl//absl/flags:flag",
+      "@com_google_absl//absl/flags:parse",
+	    ":crypto_lib",
+      ":algorithm_lib",
+    ],
 )
 # Some test case not in 'binary_evaluator_test.cc' will run into segment fault 
 # or error, so this rule will not build all test case.
