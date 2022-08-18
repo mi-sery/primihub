@@ -125,6 +125,8 @@ public:
       ret(i) = static_cast<double>(temp(i));
     return ret;
   }
+  void createBinShares(i64Matrix &vals, sbMatrix &ret);
+  void createBinShares(sbMatrix &ret);
 
   i64Matrix revealAll(const si64Matrix &vals);
 

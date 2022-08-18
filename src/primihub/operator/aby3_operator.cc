@@ -138,6 +138,13 @@ sbMatrix MPCOperator::createBinSharesByShape(u64 pIdx) {
   return dest;
 }
 
+void MPCOperator::createBinShares(i64Matrix &vals, sbMatrix &ret) {
+  enc.localBinMatrix(runtime.noDependencies(), vals, ret).get();
+}
+void MPCOperator::createBinShares(sbMatrix &ret) {
+  enc.remoteBinMatrix(runtime.noDependencies(), ret).get();
+}
+
 i64Matrix MPCOperator::revealAll(const si64Matrix &vals) {
   i64Matrix ret(vals.rows(), vals.cols());
   enc.revealAll(runtime, vals, ret).get();
