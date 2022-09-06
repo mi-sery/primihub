@@ -201,11 +201,8 @@ public:
     sf64Matrix<D> temp = sharedFixed;
     if (partyIdx == 0)
       for (i64 i = 0; i < sharedFixed.rows(); i++)
-        for (i64 j = 0; j < sharedFixed.cols(); j++) {
-          LOG(INFO) << temp[0](i, j);
+        for (i64 j = 0; j < sharedFixed.cols(); j++)
           temp[0](i, j) = sharedFixed[0](i, j) + constfixed.mValue;
-          LOG(INFO) << temp[0](i, j);
-        }
     else if (partyIdx == 1)
       for (i64 i = 0; i < sharedFixed.rows(); i++)
         for (i64 j = 0; j < sharedFixed.cols(); j++) {
@@ -315,18 +312,23 @@ public:
   si64Matrix MPC_Mul(std::vector<si64Matrix> sharedInt);
 
   template <Decimal D>
+  sf64Matrix<D> MPC_Dot_Mul(const sf64Matrix<D> &A, const sf64Matrix<D> &B) {
+    if (A.cols() != B.cols() || A.rows() != B.rows())
+      throw std::runtime_error(LOCATION);
+
+    sf64Matrix<D> ret(A.rows(), A.cols());
+    eval.asyncDotMul(runtime, A, B, ret).get();
+    return ret;
+  }
+
+  si64Matrix MPC_Dot_Mul(const si64Matrix &A, const si64Matrix &B);
+
+  template <Decimal D>
   sf64<D> MPC_Mul_Const(const f64<D> &constFixed, const sf64<D> &sharedFixed) {
     sf64<D> ret;
     eval.asyncConstFixedMul(runtime, constFixed, sharedFixed, ret).get();
     return ret;
   }
-
-  template <Decimal D>
-  sf64Matrix<D> MPC_Dot_Mul(const sf64Matrix<D> &A, const sf64Matrix<D> &B) {
-    return eval.asyncDotMul(runtime, A, B);
-  }
-
-  si64Matrix MPC_Dot_Mul(const si64Matrix &A, const si64Matrix &B);
 
   template <Decimal D>
   sf64Matrix<D> MPC_Mul_Const(const f64<D> &constFixed,
