@@ -25,6 +25,8 @@
 #include "src/primihub/util/network/socket/ioservice.h"
 #include "src/primihub/util/network/socket/session.h"
 
+#include "src/primihub/util/eigen_util.h"
+#include "src/primihub/util/log.h"
 namespace primihub {
 
 const uint8_t VAL_BITCOUNT = 64;
