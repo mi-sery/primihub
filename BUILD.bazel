@@ -719,8 +719,6 @@ cc_library(
             "src/primihub/data_store/driver.cc",
             "src/primihub/data_store/csv/csv_driver.cc",
             # "src/primihub/data_store/hdfs/hdfs_driver.cc",
-
-
     ],
     hdrs = [
             "src/primihub/data_store/factory.h",
