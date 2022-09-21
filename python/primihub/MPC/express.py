@@ -35,6 +35,7 @@ class MPCExpressRequestGenerator:
         request.expr = self.expr
         request.output_filepath = self.output_path
         request.input_filepath = self.input_path
+        request.local_partyid = self.party_id
 
         for col_name, col_attr in self.column_attr.items():
             request.columns.append(express_pb2.PartyColumn(
