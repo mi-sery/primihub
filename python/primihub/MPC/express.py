@@ -1,14 +1,9 @@
 import grpc
 import csv
 import time
-import express_pb2
-import express_pb2_grpc
 import threading
 import pandas
 import pybind_mpc
-from concurrent import futures
-from concurrent.futures import ThreadPoolExecutor
-from multiprocessing import Process
 import configparser
 
 class MPCExpressRequestGenerator:
@@ -37,15 +32,13 @@ class MPCExpressRequestGenerator:
     def gen_request(self):
         request = express_pb2.MPCExpressRequest()
         request.jobid = self.job_id
-        request.local_partyid = self.party_id
+        request.expr = self.expr
+        request.output_filepath = self.output_path
+        request.input_filepath = self.input_path
 
         for col_name, col_attr in self.column_attr.items():
             request.columns.append(express_pb2.PartyColumn(
                 name=col_name, owner=col_attr[0], float_type=col_attr[1]))
-
-        request.output_filepath = self.output_path
-        request.input_filepath = self.input_path
-        request.expr = self.expr
 
         addr = request.addr
         addr.ip_next = self.mpc_addr[0]
@@ -53,7 +46,7 @@ class MPCExpressRequestGenerator:
         addr.port_next = self.mpc_addr[2]
         addr.port_prev = self.mpc_addr[3]
 
-        return response
+        return request 
 
 
 class MPCExpressServiceClient:
@@ -61,7 +54,7 @@ class MPCExpressServiceClient:
     def start_task(remote_addr: string, msg: express_pb2.MPCExpressRequest):
         conn = grpc.insecure_channel(remote_addr)
         stub = express_pb2_grpc.MPCExpressTaskStub(channel=conn)
-        response = stub.TaskStart(request)
+        response = stub.TaskStart(msg)
         return response
 
     @staticmethod
