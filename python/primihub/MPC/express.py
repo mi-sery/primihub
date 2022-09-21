@@ -129,7 +129,7 @@ class MYSQLOperator():
         cursor = conn.cursor()
         # insert
         try:
-            sql = 'INSERT INTO task(jobid,pid,status,errmsg) VALUES(%s,%s,%s,%s);'
+            sql = 'INSERT INTO mpc_task(jobid,pid,status,errmsg) VALUES(%s,%s,%s,%s);'
             cursor.execute(sql, (jobid, pid, status, errmsg))
             conn.commit()
             print("insert success!")
@@ -159,7 +159,7 @@ class MYSQLOperator():
     def TaskStatus(self, jobid):
         cursor = conn.cursor()
         try:
-            sql = 'SELECT * FROM task where jobid=%s;'
+            sql = 'SELECT * FROM mpc_task where jobid=%s;'
             cursor.execute(sql, jobid)
             status = cursor.fetchone()[2]
             return status
@@ -172,7 +172,7 @@ class MYSQLOperator():
     def CleanHistoryTask(self):
         cursor = conn.cursor()
         try:
-            sql = 'DELETE FROM task where start_time<DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL -30 DAY);'
+            sql = 'DELETE FROM mpc_task where start_time<DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL -30 DAY);'
             affect_rows = cursor.execute(sql)
             print(affect_rows)
         except Exception as e:
