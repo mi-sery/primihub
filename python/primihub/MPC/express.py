@@ -127,21 +127,21 @@ class MYSQLOperator():
         # insert one record,get jobid,pid,status,`errmsg` ,
         status = "running"
         errmsg = ""
-        cursor = conn.cursor()
+        cursor = self.conn.cursor()
         # insert
         try:
             sql = 'INSERT INTO mpc_task(jobid,pid,status,errmsg) VALUES(%s,%s,%s,%s);'
             cursor.execute(sql, (jobid, pid, status, errmsg))
-            conn.commit()
+            self.conn.commit()
             print("insert success!")
         except Exception as e:
-            conn.rollback()
+            self.conn.rollback()
             print("error:\n", e)
 
     def TaskStop(self, jobid):
         errmsg = ""
         status = "cancelled"
-        cursor = conn.cursor()
+        cursor = self.conn.cursor()
         try:
             # inquiry pid by jobid
             sql = 'SELECT * FROM task where jobid=%s;'
@@ -152,13 +152,13 @@ class MYSQLOperator():
             # modified stauts as cancelled
             sql = "UPDATE task SET status = %s WHERE jobid = %s;"
             cursor.execute(sql, (status, jobid))
-            conn.commit()
+            self.conn.commit()
         except Exception as e:
-            conn.rollback()
+            self.conn.rollback()
             print("error:\n", e)
 
     def TaskStatus(self, jobid):
-        cursor = conn.cursor()
+        cursor = self.conn.cursor()
         try:
             sql = 'SELECT * FROM mpc_task where jobid=%s;'
             cursor.execute(sql, jobid)
@@ -171,7 +171,7 @@ class MYSQLOperator():
         #select status is running and timeouted
 
     def CleanHistoryTask(self):
-        cursor = conn.cursor()
+        cursor = self.conn.cursor()
         try:
             sql = 'DELETE FROM mpc_task where start_time<DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL -30 DAY);'
             affect_rows = cursor.execute(sql)
