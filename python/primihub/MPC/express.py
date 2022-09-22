@@ -62,7 +62,7 @@ class MPCExpressServiceClient:
     def stop_task(remote_addr: string, msg: express_pb2.MPCExpressRequest):
         conn = grpc.insecure_channel(remote_addr)
         stub = express_pb2_grpc.MPCExpressTaskStub(channel=conn)
-        response = stub.TaskStart(request)
+        response = stub.TaskStop(request)
         return response
 
 
