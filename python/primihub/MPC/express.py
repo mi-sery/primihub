@@ -277,7 +277,7 @@ class MPCExpressService(express_pb2_grpc.MPCExpressTaskServicer):
                 writer.writerow([expr])
                 for v in result:
                     writer.writerow([v])
-
+            f.close()
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
