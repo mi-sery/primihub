@@ -110,4 +110,8 @@ TEST(cmp_op, mpc_cmp_op) {
       LOG(ERROR) << "Invalid MPC_PARTY value " << std::getenv("MPC_PARTY")
                  << ".";
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> c430fa7 (added compare)

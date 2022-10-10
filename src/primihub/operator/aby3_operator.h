@@ -475,5 +475,115 @@ public:
   void MPC_Compare(sbMatrix &sh_res);
 };
 
+      all_party_shape.emplace_back(shape);
+    }
+
+    {
+      LOG(INFO) << "Dump shape of all party's matrix:";
+      for (uint64_t i = 0; i < 3; i++)
+        LOG(INFO) << "Party " << i << ": (" << all_party_shape[i][0] << ", "
+                  << all_party_shape[i][1] << ")";
+      LOG(INFO) << "Dump finish.";
+    }
+
+    // The compare is a binary operator, so only two party will provide value
+    // for compare, find out which party don't provide value.
+    int skip_index = -1;
+    for (uint64_t i = 0; i < 3; i++) {
+      if (all_party_shape[i][0] == 0 && all_party_shape[i][1] == 0) {
+        if (skip_index != -1) {
+          throw std::runtime_error(
+              "There are two party that don't provide any value at last, but "
+              "compare operator require value from two party.");
+        } else {
+          skip_index = i;
+        }
+      }
+    }
+
+    if (skip_index == -1)
+      throw std::runtime_error(
+          "This operator is binary, can only handle value from two party.");
+
+    // Shape of matrix in two party shoubld be the same.
+    if (skip_index == 0) {
+      all_party_shape[0][0] = all_party_shape[1][0];
+      all_party_shape[0][1] = all_party_shape[1][1];
+      all_party_shape[1][0] = all_party_shape[2][0];
+      all_party_shape[1][1] = all_party_shape[2][1];
+    } else if (skip_index != 2) {
+      all_party_shape[1][0] = all_party_shape[2][0];
+      all_party_shape[1][1] = all_party_shape[2][1];
+    }
+
+    if ((all_party_shape[0][0] != all_party_shape[1][0]) ||
+        (all_party_shape[0][1] != all_party_shape[1][1]))
+      throw std::runtime_error(
+          "Shape of matrix in two party must be the same.");
+
+    // Set value to it's negative for some party.
+    if (skip_index == 0 || skip_index == 1) {
+      if (partyIdx == 2)
+        m.mData = m.mData.array() * -1;
+    } else {
+      if (partyIdx == 1)
+        m.mData = m.mData.array() * -1;
+    }
+
+    LOG(INFO) << "Party " << (skip_index + 1) % 3 << " and party "
+              << (skip_index + 2) % 3 << " provide value for MPC compare.";
+
+    // Create binary shares.
+    uint64_t num_elem = all_party_shape[0][0] * all_party_shape[0][1];
+    m.resize(num_elem, 1);
+
+    std::vector<sbMatrix> sh_m_vec;
+    for (uint64_t i = 0; i < 3; i++) {
+      if (static_cast<int>(i) == skip_index)
+        continue;
+      if (i == partyIdx) {
+        sbMatrix sh_m(num_elem, VAL_BITCOUNT);
+        auto task = runtime.noDependencies();
+        task.get();
+        enc.localBinMatrix(task, m.i64Cast(), sh_m).get();
+        sh_m_vec.emplace_back(sh_m);
+      } else {
+        sbMatrix sh_m(num_elem, VAL_BITCOUNT);
+        auto task = runtime.noDependencies();
+        task.get();
+        enc.remoteBinMatrix(task, sh_m).get();
+        sh_m_vec.emplace_back(sh_m);
+      }
+    }
+
+    LOG(INFO) << "Create binary share for value from two party finish.";
+
+    // Build then run MSB circuit.
+    KoggeStoneLibrary lib;
+    uint64_t size = 64;
+    BetaCircuit *cir = lib.int_int_add_msb(size);
+    cir->levelByAndDepth();
+
+    sh_res.resize(m.size(), 1);
+    std::vector<const sbMatrix *> input = {&sh_m_vec[0], &sh_m_vec[1]};
+    std::vector<sbMatrix *> output = {&sh_res};
+    auto task = runtime.noDependencies();
+    task = binEval.asyncEvaluate(task, cir, gen, input, output);
+    task.get();
+
+    // Recover original value.
+    if (skip_index == 0 || skip_index == 1) {
+      if (partyIdx == 2)
+        m.mData = m.mData.array() * -1;
+    } else {
+      if (partyIdx == 1)
+        m.mData = m.mData.array() * -1;
+    }
+
+    LOG(INFO) << "Finish evalute MSB circuit.";
+  }
+
+  void MPC_Compare(sbMatrix &sh_res);
+};
 #endif
 } // namespace primihub
