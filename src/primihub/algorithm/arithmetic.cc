@@ -13,8 +13,7 @@ using arrow::Table;
 namespace primihub {
 void spiltStr(string str, const string &split, std::vector<string> &strlist) {
   strlist.clear();
-  if (str == "")
-    return;
+  if (str == "") return;
   string strs = str + split;
   size_t pos = strs.find(split);
   int steps = split.size();
@@ -42,7 +41,7 @@ ArithmeticExecutor<Dbit>::ArithmeticExecutor(
     party_id_node_map[party_id] = node;
   }
 
-  auto iter = node_map.find(config.node_id); // node_id
+  auto iter = node_map.find(config.node_id);  // node_id
   if (iter == node_map.end()) {
     stringstream ss;
     ss << "Can't find " << config.node_id << " in node_map.";
@@ -125,8 +124,7 @@ int ArithmeticExecutor<Dbit>::loadParams(primihub::rpc::Task &task) {
 
     expr_ = param_map["Expr"].value_string();
     is_cmp = false;
-    if (expr_.substr(0, 3) == "CMP")
-      is_cmp = true;
+    if (expr_.substr(0, 3) == "CMP") is_cmp = true;
     if (is_cmp) {
       std::string next_name;
       std::string prev_name;
@@ -163,7 +161,8 @@ int ArithmeticExecutor<Dbit>::loadParams(primihub::rpc::Task &task) {
   return 0;
 }
 
-template <Decimal Dbit> int ArithmeticExecutor<Dbit>::loadDataset() {
+template <Decimal Dbit>
+int ArithmeticExecutor<Dbit>::loadDataset() {
   int ret = _LoadDatasetFromCSV(data_file_path_);
   // file reading error or file empty
   if (ret <= 0) {
@@ -192,7 +191,8 @@ template <Decimal Dbit> int ArithmeticExecutor<Dbit>::loadDataset() {
   return 0;
 }
 
-template <Decimal Dbit> int ArithmeticExecutor<Dbit>::initPartyComm(void) {
+template <Decimal Dbit>
+int ArithmeticExecutor<Dbit>::initPartyComm(void) {
   if (is_cmp) {
     mpc_op_exec_->setup(next_ip_, prev_ip_, next_port_, prev_port_);
     return 0;
@@ -203,7 +203,8 @@ template <Decimal Dbit> int ArithmeticExecutor<Dbit>::initPartyComm(void) {
   return 0;
 }
 
-template <Decimal Dbit> int ArithmeticExecutor<Dbit>::execute() {
+template <Decimal Dbit>
+int ArithmeticExecutor<Dbit>::execute() {
   if (is_cmp) {
     try {
       sbMatrix sh_res;
@@ -260,7 +261,8 @@ template <Decimal Dbit> int ArithmeticExecutor<Dbit>::execute() {
   return 0;
 }
 
-template <Decimal Dbit> int ArithmeticExecutor<Dbit>::finishPartyComm(void) {
+template <Decimal Dbit> 
+int ArithmeticExecutor<Dbit>::finishPartyComm(void) {
   if (is_cmp) {
     mpc_op_exec_->fini();
     delete mpc_op_exec_;
@@ -270,7 +272,8 @@ template <Decimal Dbit> int ArithmeticExecutor<Dbit>::finishPartyComm(void) {
   return 0;
 }
 
-template <Decimal Dbit> int ArithmeticExecutor<Dbit>::saveModel(void) {
+template <Decimal Dbit> 
+int ArithmeticExecutor<Dbit>::saveModel(void) {
   bool is_reveal = false;
   for (auto party : parties_) {
     if (party == party_id_) {
@@ -289,8 +292,7 @@ template <Decimal Dbit> int ArithmeticExecutor<Dbit>::saveModel(void) {
     for (int i = 0; i < final_val_int64_.size(); i++)
       builder.Append(final_val_int64_[i]);
   else
-    for (int i = 0; i < cmp_res_.size(); i++)
-      builder.Append(cmp_res_[i]);
+    for (int i = 0; i < cmp_res_.size(); i++) builder.Append(cmp_res_[i]);
   std::shared_ptr<arrow::Array> array;
   builder.Finish(&array);
 
@@ -444,12 +446,11 @@ int ArithmeticExecutor<Dbit>::_LoadDatasetFromCSV(std::string &filename) {
       // }
     }
   }
-  if (errors)
-    return -1;
+  if (errors) return -1;
 
   return array_len;
 }
 template class ArithmeticExecutor<D32>;
 template class ArithmeticExecutor<D16>;
 
-} // namespace primihub
+}  // namespace primihub
