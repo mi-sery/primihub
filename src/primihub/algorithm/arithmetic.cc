@@ -305,7 +305,7 @@ int ArithmeticExecutor<Dbit>::execute() {
           size_t count = col_and_val_int[cmp_col2].size();
           m.resize(1, count);
 
-          std::vector<int64_t> &col = col_and_val_int[cmp_col1];
+          std::vector<int64_t> &col = col_and_val_int[cmp_col2];
           for (size_t i = 0; i < count; i++)
             m(i) = col[i];
 
