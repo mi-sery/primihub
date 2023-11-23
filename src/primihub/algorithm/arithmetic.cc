@@ -167,9 +167,6 @@ int ArithmeticExecutor<Dbit>::loadDataset() {
   if (is_cmp) {
     // When the data types of two columns are different,
     // conversion is possible.
-    // TODO: just for test.
-    std::string cmp_col1 = "A";
-    std::string cmp_col2 = "B";
     auto iter1 = col_and_dtype_.find(cmp_col1);
     if (iter1 == col_and_dtype_.end()) {
       std::stringstream ss;
@@ -284,10 +281,6 @@ template <Decimal Dbit>
 int ArithmeticExecutor<Dbit>::execute() {
   if (is_cmp) {
     try {
-      // TODO: just for test.
-      std::string cmp_col1 = "A";
-      std::string cmp_col2 = "B";
-
       LOG(INFO) << "Run MPC Compare between " << cmp_col1 << " and " << cmp_col2
                 << ".";
 
